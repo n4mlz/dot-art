@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import Button from "./Button";
+import clipboardCopy from "clipboard-copy";
 
 const colorCss = [
   "linear-gradient(-30deg, #1EB8CB 0%, #1EB8CB 50%, #F07461 50%, #F07461 100%)",
@@ -34,6 +34,7 @@ const App: React.FC = () => {
         : r
     );
     setGrid(newGrid);
+    setResultText(generateResultText());
   };
 
   const handleMouseDown = (row: number, col: number) => {
@@ -71,89 +72,100 @@ const App: React.FC = () => {
     setGrid(newGrid);
   }, [gridSizeW, gridSizeH]);
 
-  const [loadState, setLoadState] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-
-  const sendDot = async () => {
-    setLoadState("loading");
-    let res = undefined;
-    for (let i = 0; i < grid.length; i++) {
-      setTimeout(() => {
-        const reqBody = { content: grid[i].join(",") };
-        res = fetch("https://***", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "User-Agent": "dot-generator made by n4mlz",
-          },
-          body: JSON.stringify(reqBody),
-        });
-      }, i);
-    }
-    await res;
-    setLoadState("success");
-    setTimeout(() => {
-      setLoadState("idle");
-    }, 2000);
+  const generateResultText = () => {
+    const command = grid
+      .map((row) => row.join(","))
+      .map(
+        (row) =>
+          `curl 'https://live-api.sohosai.com/reaction' -X POST -H 'User-Agent: Dot-Generator made by n4mlz' --data-raw '{"content":"${row}"}'`
+      )
+      .join("\n");
+    return command;
   };
+
+  const [resultText, setResultText] = useState<string>("");
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+
+  const handleCopy = () => {
+    clipboardCopy(resultText).then(() => {
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 1000);
+    });
+  };
+
+  useEffect(() => {
+    setResultText(generateResultText());
+  }, []);
 
   return (
     <div className="app" onMouseUp={handleMouseUp}>
-      <h1>ドット絵エディタ</h1>
+      <h1 className="title">ドット絵エディタ</h1>
       <div className="main-wrapper">
         <div className="dot-editor">
-          <div className="size-selector">
-            <label>
-              グリッドの幅 (1〜10):
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={gridSizeW}
-                onChange={handleGridSizeWChange}
-              />
-            </label>
-            <label>
-              グリッドの高さ (1〜10):
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={gridSizeH}
-                onChange={(event) => setGridSizeH(Number(event.target.value))}
-              />
-            </label>
+          <div className="editor">
+            <div className="size-selector">
+              <label>
+                グリッドの幅 (1〜10):
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={gridSizeW}
+                  onChange={handleGridSizeWChange}
+                />
+              </label>
+              <label>
+                グリッドの高さ (1〜10):
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={gridSizeH}
+                  onChange={(event) => setGridSizeH(Number(event.target.value))}
+                />
+              </label>
+            </div>
+            <div className="color-picker">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="color-swatch"
+                  style={{
+                    background: colorCss[index],
+                    border:
+                      selectedColor === index ? "3px solid black" : "none",
+                  }}
+                  onClick={() => setSelectedColor(index)}
+                />
+              ))}
+            </div>
+            <div className="grid">
+              {grid.map((row, rowIndex) => (
+                <div className="row" key={rowIndex}>
+                  {row.map((color, colIndex) => (
+                    <div
+                      key={colIndex}
+                      className="cell"
+                      style={{ background: colorCss[color] }}
+                      onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                      onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="color-picker">
-            {[...Array(5)].map((_, index) => (
-              <div
-                key={index}
-                className="color-swatch"
-                style={{
-                  background: colorCss[index],
-                  border: selectedColor === index ? "3px solid black" : "none",
-                }}
-                onClick={() => setSelectedColor(index)}
-              />
-            ))}
+          <div className="result-wrapper">
+            <button
+              className={`copy-button ${isCopied && "copied"}`}
+              onClick={handleCopy}
+            >
+              {isCopied ? "コピーしました！" : "コピー"}
+            </button>
+            <div className="result">{resultText}</div>
           </div>
-          <div className="grid">
-            {grid.map((row, rowIndex) => (
-              <div className="row" key={rowIndex}>
-                {row.map((color, colIndex) => (
-                  <div
-                    key={colIndex}
-                    className="cell"
-                    style={{ background: colorCss[color] }}
-                    onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                    onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
-          <Button loadState={loadState} onClick={sendDot} />
         </div>
         <div className="preview">
           <div className="iframe-wrapper">
