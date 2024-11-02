@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Button from "./Button";
 
 const colorCss = [
   "linear-gradient(-30deg, #1EB8CB 0%, #1EB8CB 50%, #F07461 50%, #F07461 100%)",
@@ -70,6 +71,10 @@ const App: React.FC = () => {
     setGrid(newGrid);
   }, [gridSizeW, gridSizeH]);
 
+  const [loadState, setLoadState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
   return (
     <div className="app" onMouseUp={handleMouseUp}>
       <h1>ドット絵エディタ</h1>
@@ -125,6 +130,10 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
+          <Button
+            loadState={loadState}
+            onClick={() => setLoadState("loading")}
+          />
         </div>
         <div className="preview">
           <div className="iframe-wrapper">
