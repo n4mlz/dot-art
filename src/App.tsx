@@ -73,55 +73,64 @@ const App: React.FC = () => {
   return (
     <div className="app" onMouseUp={handleMouseUp}>
       <h1>ドット絵エディタ</h1>
-      <div className="size-selector">
-        <label>
-          グリッドの幅 (1〜10):
-          <input
-            type="number"
-            min="1"
-            max="10"
-            value={gridSizeW}
-            onChange={handleGridSizeWChange}
-          />
-        </label>
-        <label>
-          グリッドの高さ (1〜10):
-          <input
-            type="number"
-            min="1"
-            max="10"
-            value={gridSizeH}
-            onChange={(event) => setGridSizeH(Number(event.target.value))}
-          />
-        </label>
-      </div>
-      <div className="color-picker">
-        {[...Array(5)].map((_, index) => (
-          <div
-            key={index}
-            className="color-swatch"
-            style={{
-              background: colorCss[index],
-              border: selectedColor === index ? "3px solid black" : "none",
-            }}
-            onClick={() => setSelectedColor(index)}
-          />
-        ))}
-      </div>
-      <div className="grid">
-        {grid.map((row, rowIndex) => (
-          <div className="row" key={rowIndex}>
-            {row.map((color, colIndex) => (
+      <div className="main-wrapper">
+        <div className="dot-editor">
+          <div className="size-selector">
+            <label>
+              グリッドの幅 (1〜10):
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={gridSizeW}
+                onChange={handleGridSizeWChange}
+              />
+            </label>
+            <label>
+              グリッドの高さ (1〜10):
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={gridSizeH}
+                onChange={(event) => setGridSizeH(Number(event.target.value))}
+              />
+            </label>
+          </div>
+          <div className="color-picker">
+            {[...Array(5)].map((_, index) => (
               <div
-                key={colIndex}
-                className="cell"
-                style={{ background: colorCss[color] }}
-                onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                key={index}
+                className="color-swatch"
+                style={{
+                  background: colorCss[index],
+                  border: selectedColor === index ? "3px solid black" : "none",
+                }}
+                onClick={() => setSelectedColor(index)}
               />
             ))}
           </div>
-        ))}
+          <div className="grid">
+            {grid.map((row, rowIndex) => (
+              <div className="row" key={rowIndex}>
+                {row.map((color, colIndex) => (
+                  <div
+                    key={colIndex}
+                    className="cell"
+                    style={{ background: colorCss[color] }}
+                    onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                    onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="preview">
+          <div className="iframe-wrapper">
+            <iframe src="https://live.sohosai.com" />
+          </div>
+        </div>
       </div>
     </div>
   );

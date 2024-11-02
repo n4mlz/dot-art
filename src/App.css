@@ -4,6 +4,27 @@
   height: 100vh;
 }
 
+.main-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.iframe-wrapper {
+  width: 425px;
+  height: 672px;
+  overflow: hidden;
+}
+
+.iframe-wrapper iframe {
+  position: relative;
+  width: 1280px;
+  height: 1000px;
+  top: -90px;
+  left: -856px;
+}
+
 .size-selector {
   display: flex;
   gap: 10px;
