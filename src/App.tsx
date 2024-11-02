@@ -99,7 +99,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app" onMouseUp={handleMouseUp}>
-      <h1 className="title">ドット絵エディタ</h1>
+      <h1 className="title">謎のドット絵エディタ</h1>
       <div className="main-wrapper">
         <div className="dot-editor">
           <div className="editor">
