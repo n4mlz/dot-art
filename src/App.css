@@ -85,8 +85,8 @@
 }
 
 .cell {
-  width: 40px;  /* セルの幅 */
-  height: 40px; /* セルの高さ */
+  width: 40px;
+  height: 40px;
   border: 1px solid #ccc;
   cursor: pointer;
   transition: background-color 0.3s;

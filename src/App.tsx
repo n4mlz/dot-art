@@ -11,8 +11,8 @@ const colorCss = [
 ];
 
 const App: React.FC = () => {
-  const [gridSizeW, setGridSizeW] = useState<number>(9); // グリッドの幅
-  const [gridSizeH, setGridSizeH] = useState<number>(8); // グリッドの高さ
+  const [gridSizeW, setGridSizeW] = useState<number>(9);
+  const [gridSizeH, setGridSizeH] = useState<number>(8);
 
   const [grid, setGrid] = useState<number[][]>([
     [4, 4, 4, 4, 4, 4, 4, 4, 4],
@@ -24,7 +24,7 @@ const App: React.FC = () => {
     [4, 4, 4, 4, 0, 4, 4, 4, 4],
     [4, 4, 4, 4, 4, 4, 4, 4, 4],
   ]);
-  const [selectedColor, setSelectedColor] = useState<number>(0); // 初期選択色
+  const [selectedColor, setSelectedColor] = useState<number>(0);
   const [isPainting, setIsPainting] = useState(false);
 
   const drawCell = (row: number, col: number) => {
@@ -60,13 +60,11 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    // 新しいサイズのグリッドを生成し、既存の色を保持する
     const newGrid = Array.from({ length: gridSizeH }, (_, rowIndex) =>
       Array.from({ length: gridSizeW }, (_, colIndex) => {
-        // 既存のグリッドのサイズを考慮して色を設定
         return rowIndex < grid.length && colIndex < grid[rowIndex].length
           ? grid[rowIndex][colIndex]
-          : 4; // 新しいセルは初期色に設定
+          : 4;
       })
     );
     setGrid(newGrid);
