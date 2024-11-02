@@ -2,19 +2,21 @@ import React from "react";
 import "./Button.css";
 
 interface ButtonProps {
-  isLoading?: boolean;
+  loadState: "idle" | "loading" | "success" | "error";
   onClick?: () => void;
-  children?: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({ isLoading, onClick, children }) => {
+const Button: React.FC<ButtonProps> = ({ loadState, onClick }) => {
   return (
     <button
-      className={`custom-button ${isLoading ? "loading" : ""}`}
+      className={`custom-button ${loadState}`}
       onClick={onClick}
-      disabled={isLoading}
+      disabled={loadState != "idle"}
     >
-      {isLoading ? <span className="spinner"></span> : children}
+      {loadState == "idle" && <span>送信する</span>}
+      {loadState == "loading" && <span className="spinner"></span>}
+      {loadState == "success" && <span>Success</span>}
+      {loadState == "error" && <span>Error</span>}
     </button>
   );
 };

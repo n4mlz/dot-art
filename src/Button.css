@@ -23,6 +23,14 @@
     background-color: #535353; /* Darker Purple */
     cursor: not-allowed;
   }
+
+  .custom-button.success {
+    background-color: #00e676; /* Material Green */
+  }
+
+  .custom-button.error {
+    background-color: #ff1744; /* Material Red */
+  }
   
   .spinner {
     border: 3px solid rgba(255, 255, 255, 0.3);
