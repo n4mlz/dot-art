@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-const colors = [
+const colorCss = [
   "linear-gradient(-30deg, #1EB8CB 0%, #1EB8CB 50%, #F07461 50%, #F07461 100%)",
   "linear-gradient(-30deg, #1EB8CB 0%, #1EB8CB 50%, #64C2AF 50%, #64C2AF 100%)",
   "linear-gradient(-30deg, #1EB8CB 0%, #1EB8CB 50%, #F8D278 50%, #F8D278 100%)",
@@ -13,10 +13,10 @@ const App: React.FC = () => {
   const [gridSizeW, setGridSizeW] = useState<number>(10); // グリッドの幅
   const [gridSizeH, setGridSizeH] = useState<number>(10); // グリッドの高さ
 
-  const [grid, setGrid] = useState<string[][]>(
-    Array(gridSizeH).fill(Array(gridSizeW).fill(colors[4]))
+  const [grid, setGrid] = useState<number[][]>(
+    Array(gridSizeH).fill(Array(gridSizeW).fill(4))
   );
-  const [selectedColor, setSelectedColor] = useState<string>(colors[0]); // 初期選択色
+  const [selectedColor, setSelectedColor] = useState<number>(0); // 初期選択色
   const [isPainting, setIsPainting] = useState(false);
 
   const drawCell = (row: number, col: number) => {
@@ -57,7 +57,7 @@ const App: React.FC = () => {
         // 既存のグリッドのサイズを考慮して色を設定
         return rowIndex < grid.length && colIndex < grid[rowIndex].length
           ? grid[rowIndex][colIndex]
-          : colors[4]; // 新しいセルは初期色に設定
+          : 4; // 新しいセルは初期色に設定
       })
     );
     setGrid(newGrid);
@@ -89,15 +89,15 @@ const App: React.FC = () => {
         </label>
       </div>
       <div className="color-picker">
-        {colors.map((color) => (
+        {[...Array(5)].map((_, index) => (
           <div
-            key={color}
+            key={index}
             className="color-swatch"
             style={{
-              background: color,
-              border: selectedColor === color ? "3px solid black" : "none",
+              background: colorCss[index],
+              border: selectedColor === index ? "3px solid black" : "none",
             }}
-            onClick={() => setSelectedColor(color)}
+            onClick={() => setSelectedColor(index)}
           />
         ))}
       </div>
@@ -108,7 +108,7 @@ const App: React.FC = () => {
               <div
                 key={colIndex}
                 className="cell"
-                style={{ background: color }}
+                style={{ background: colorCss[color] }}
                 onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                 onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
               />
