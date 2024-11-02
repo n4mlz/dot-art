@@ -10,12 +10,19 @@ const colorCss = [
 ];
 
 const App: React.FC = () => {
-  const [gridSizeW, setGridSizeW] = useState<number>(10); // グリッドの幅
-  const [gridSizeH, setGridSizeH] = useState<number>(10); // グリッドの高さ
+  const [gridSizeW, setGridSizeW] = useState<number>(9); // グリッドの幅
+  const [gridSizeH, setGridSizeH] = useState<number>(8); // グリッドの高さ
 
-  const [grid, setGrid] = useState<number[][]>(
-    Array(gridSizeH).fill(Array(gridSizeW).fill(4))
-  );
+  const [grid, setGrid] = useState<number[][]>([
+    [4, 4, 4, 4, 4, 4, 4, 4, 4],
+    [4, 4, 0, 0, 4, 0, 0, 4, 4],
+    [4, 0, 0, 0, 0, 0, 0, 0, 4],
+    [4, 0, 0, 0, 0, 0, 0, 0, 4],
+    [4, 4, 0, 0, 0, 0, 0, 4, 4],
+    [4, 4, 4, 0, 0, 0, 4, 4, 4],
+    [4, 4, 4, 4, 0, 4, 4, 4, 4],
+    [4, 4, 4, 4, 4, 4, 4, 4, 4],
+  ]);
   const [selectedColor, setSelectedColor] = useState<number>(0); // 初期選択色
   const [isPainting, setIsPainting] = useState(false);
 
