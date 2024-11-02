@@ -1,5 +1,14 @@
 .app {
   text-align: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.size-selector {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .color-picker {
