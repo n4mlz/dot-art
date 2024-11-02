@@ -75,6 +75,29 @@ const App: React.FC = () => {
     "idle" | "loading" | "success" | "error"
   >("idle");
 
+  const sendDot = async () => {
+    setLoadState("loading");
+    let res = undefined;
+    for (let i = 0; i < grid.length; i++) {
+      setTimeout(() => {
+        const reqBody = { content: grid[i].join(",") };
+        res = fetch("https://***", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "dot-generator made by n4mlz",
+          },
+          body: JSON.stringify(reqBody),
+        });
+      }, i);
+    }
+    await res;
+    setLoadState("success");
+    setTimeout(() => {
+      setLoadState("idle");
+    }, 2000);
+  };
+
   return (
     <div className="app" onMouseUp={handleMouseUp}>
       <h1>ドット絵エディタ</h1>
@@ -130,10 +153,7 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-          <Button
-            loadState={loadState}
-            onClick={() => setLoadState("loading")}
-          />
+          <Button loadState={loadState} onClick={sendDot} />
         </div>
         <div className="preview">
           <div className="iframe-wrapper">
