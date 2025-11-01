@@ -35,7 +35,6 @@ const App: React.FC = () => {
         : r
     );
     setGrid(newGrid);
-    setResultText(generateResultText());
   };
 
   const handleMouseDown = (row: number, col: number) => {
@@ -125,18 +124,22 @@ const App: React.FC = () => {
       console.warn('フォントの読み込みに失敗しました:', error);
     }
 
-    // 最初の1文字を変換
-    const char = textInput[0];
-    const bitmap = convertCharToBitmap(char);
+    // 各文字を8x8ビットマップに変換して縦に並べる
+    const allBitmaps: number[][] = [];
+    for (let i = 0; i < textInput.length; i++) {
+      const char = textInput[i];
+      const bitmap = convertCharToBitmap(char);
+      // ビットマップの各行を結果に追加
+      allBitmaps.push(...bitmap);
+    }
 
-    // グリッドサイズを8x8に設定
+    // グリッドサイズを設定：幅8、高さは文字数 x 8
     setGridSizeW(8);
-    setGridSizeH(8);
+    setGridSizeH(textInput.length * 8);
 
     // useEffectの実行後にグリッドを更新するため、setTimeoutを使用
     setTimeout(() => {
-      setGrid(bitmap);
-      setResultText(generateResultText());
+      setGrid(allBitmaps);
     }, 0);
   };
 
@@ -164,7 +167,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setResultText(generateResultText());
-  }, []);
+  }, [grid]);
 
   return (
     <div className="app" onMouseUp={handleMouseUp}>
@@ -184,11 +187,10 @@ const App: React.FC = () => {
                 />
               </label>
               <label>
-                グリッドの高さ (1〜10):
+                グリッドの高さ:
                 <input
                   type="number"
                   min="1"
-                  max="10"
                   value={gridSizeH}
                   onChange={(event) => setGridSizeH(Number(event.target.value))}
                 />
@@ -201,8 +203,7 @@ const App: React.FC = () => {
                   type="text"
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
-                  placeholder="1文字入力"
-                  maxLength={1}
+                  placeholder="テキスト入力"
                 />
               </label>
               <button onClick={handleConvertText}>変換</button>
