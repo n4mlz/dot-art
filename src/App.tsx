@@ -72,10 +72,9 @@ const App: React.FC = () => {
 
   const generateResultText = () => {
     const command = grid
-      .map((row) => row.join(","))
       .map(
         (row) =>
-          `curl 'https://live-api.sohosai.com/reaction' -X POST -H 'User-Agent: Dot-Generator made by n4mlz' --data-raw '{"content":"${row}"}'`
+          `curl 'https://live-api.sohosai.com/channel/uni' -X POST -H 'User-Agent: Dot-Generator made by n4mlz' --data-raw '{"emojis":${JSON.stringify(row)}}'`
       )
       .join("\n");
     return command;
