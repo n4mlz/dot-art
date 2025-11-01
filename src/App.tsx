@@ -13,6 +13,7 @@ const colorCss = [
 const App: React.FC = () => {
   const [gridSizeW, setGridSizeW] = useState<number>(9);
   const [gridSizeH, setGridSizeH] = useState<number>(8);
+  const [textInput, setTextInput] = useState<string>("");
 
   const [grid, setGrid] = useState<number[][]>([
     [4, 4, 4, 4, 4, 4, 4, 4, 4],
@@ -70,6 +71,75 @@ const App: React.FC = () => {
     setGrid(newGrid);
   }, [gridSizeW, gridSizeH]);
 
+  // 文字を8x8ビットマップに変換する関数
+  const convertCharToBitmap = (char: string): number[][] => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return Array(8).fill(Array(8).fill(4));
+
+    canvas.width = 8;
+    canvas.height = 8;
+
+    // 背景をクリア
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, 8, 8);
+
+    // みさきフォントで文字を描画
+    ctx.fillStyle = 'black';
+    ctx.font = '8px Misaki';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillText(char, 0, 0);
+
+    // ピクセルデータを取得
+    const imageData = ctx.getImageData(0, 0, 8, 8);
+    const pixels = imageData.data;
+
+    // 8x8の配列に変換（しきい値処理）
+    const bitmap: number[][] = [];
+    for (let y = 0; y < 8; y++) {
+      const row: number[] = [];
+      for (let x = 0; x < 8; x++) {
+        const index = (y * 8 + x) * 4;
+        const r = pixels[index];
+        const g = pixels[index + 1];
+        const b = pixels[index + 2];
+        // RGBの平均が128未満なら黒（ドットあり）
+        const brightness = (r + g + b) / 3;
+        row.push(brightness < 128 ? selectedColor : 4);
+      }
+      bitmap.push(row);
+    }
+
+    return bitmap;
+  };
+
+  // テキストをドット絵に変換してグリッドに反映
+  const handleConvertText = async () => {
+    if (textInput.length === 0) return;
+
+    // フォントの読み込みを待つ
+    try {
+      await document.fonts.load('8px Misaki');
+    } catch (error) {
+      console.warn('フォントの読み込みに失敗しました:', error);
+    }
+
+    // 最初の1文字を変換
+    const char = textInput[0];
+    const bitmap = convertCharToBitmap(char);
+
+    // グリッドサイズを8x8に設定
+    setGridSizeW(8);
+    setGridSizeH(8);
+
+    // useEffectの実行後にグリッドを更新するため、setTimeoutを使用
+    setTimeout(() => {
+      setGrid(bitmap);
+      setResultText(generateResultText());
+    }, 0);
+  };
+
   const generateResultText = () => {
     const command = grid
       .map(
@@ -123,6 +193,19 @@ const App: React.FC = () => {
                   onChange={(event) => setGridSizeH(Number(event.target.value))}
                 />
               </label>
+            </div>
+            <div className="text-converter">
+              <label>
+                みさきフォント変換:
+                <input
+                  type="text"
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  placeholder="1文字入力"
+                  maxLength={1}
+                />
+              </label>
+              <button onClick={handleConvertText}>変換</button>
             </div>
             <div className="color-picker">
               {[...Array(5)].map((_, index) => (
